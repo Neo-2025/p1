@@ -15,6 +15,8 @@ const requestSchema = z.object({
   data: z.string()
 });
 
+type RequestData = z.infer<typeof requestSchema>;
+
 // Response types
 type SuccessResponse = {
   data: string;
@@ -64,8 +66,8 @@ async function handlePost(
   res: NextApiResponse<SuccessResponse>
 ) {
   // Validate request
-  const validation = await validateRequest(req, requestSchema);
-  if (!validation.success) {
+  const validation = await validateRequest<RequestData>(req, requestSchema);
+  if (!validation.success || !validation.data) {
     throw new ApiError(400, validation.error || 'Invalid request');
   }
 
