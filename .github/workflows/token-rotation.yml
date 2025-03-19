@@ -1,0 +1,31 @@
+name: Token Rotation
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Rotate GitHub Token
+        run: |
+          gh auth refresh -h github.com
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          
+      - name: Rotate Vercel Token
+        run: |
+          vercel tokens rotate
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          
+      - name: Update Environment Variables
+        run: |
+          vercel env pull .env.production
+          gh secret set --env-file .env.production
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} 
