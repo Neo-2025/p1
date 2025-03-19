@@ -2,14 +2,32 @@
   "name": "p1",
   "version": "0.1.0",
   "private": true,
+  "description": "SmartScale SS4 Project - Simplified SaaS Template",
+  "author": "SmartScale",
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
+    
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
-    "stripe:sync": "node scripts/stripe-sync.js"
+    "db:seed": "node scripts/seed-db.js",
+    "db:migrate": "drizzle-kit generate:pg",
+    
+    "stripe:sync": "node scripts/stripe-sync.js",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
+    
+    "vercel:env:pull": "vercel env pull .env.local",
+    "vercel:deploy": "vercel --prod",
+    
+    "prepare": "husky install"
   },
   "dependencies": {
     "@stripe/stripe-js": "^2.4.0",
@@ -21,7 +39,11 @@
     "postgres": "^3.4.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "stripe": "^14.14.0"
+    "stripe": "^14.14.0",
+    "@tanstack/react-query": "^5.0.0",
+    "zod": "^3.22.4",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
@@ -29,11 +51,29 @@
     "@types/node": "^20.11.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "@types/jest": "^29.5.0",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
     "autoprefixer": "^10.4.17",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.5",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "typescript": "5.3.3"
-  }
+    "typescript": "5.3.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "main": "postcss.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": []
 }

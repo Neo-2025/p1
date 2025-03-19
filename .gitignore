@@ -46,4 +46,12 @@ logs
 *.log
 
 # Cache
-.cache/ 
+.cache/
+
+# Backup files
+*.backup
+*.bak
+
+# Environment files
+.env*
+!.env.example 
