@@ -1,0 +1,8 @@
+// Repository Rules
+{
+    "repository": {
+        "blocked": ["https://github.com/SmartScale-co/gt2"],
+        "message": "This repository is obsolete. Please use https://github.com/Neo-2025/p1 instead.",
+        "current": "https://github.com/Neo-2025/p1"
+    }
+} 

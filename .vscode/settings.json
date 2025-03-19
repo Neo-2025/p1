@@ -1,0 +1,1 @@
+{"terminal.integrated.defaultProfile.windows": "WSL","terminal.integrated.profiles.windows": {"WSL": {"path": "wsl.exe","args": ["-d", "Ubuntu-20.04"]}},"files.eol": "\n","files.watcherExclude": {"**/node_modules/**": true,"**/.git/**": true}}
