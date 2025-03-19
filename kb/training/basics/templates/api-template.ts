@@ -1,56 +1,75 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { validateRequest } from '@/lib/validation';
 import { handleError, ApiError } from '@/lib/error-handling';
+import { z } from 'zod';
 
 // Handler function types
-type ApiHandler = (req: NextApiRequest, res: NextApiResponse) => Promise<void>;
-
-// Handler implementations
-const handleGet: ApiHandler = async (req, res) => {
-  // Implement GET logic here
-  res.status(200).json({ message: 'GET request successful' });
-};
-
-const handlePost: ApiHandler = async (req, res) => {
-  // Implement POST logic here
-  res.status(201).json({ message: 'POST request successful' });
-};
-
-const handlePut: ApiHandler = async (req, res) => {
-  // Implement PUT logic here
-  res.status(200).json({ message: 'PUT request successful' });
-};
-
-const handleDelete: ApiHandler = async (req, res) => {
-  // Implement DELETE logic here
-  res.status(200).json({ message: 'DELETE request successful' });
-};
-
-export default async function handler(
+type HandlerFunction = (
   req: NextApiRequest,
   res: NextApiResponse
+) => Promise<void>;
+
+// Request validation schema
+const requestSchema = z.object({
+  // Define your request schema here
+  data: z.string()
+});
+
+// Response types
+type SuccessResponse = {
+  data: string;
+};
+
+type ErrorResponse = {
+  error: string;
+  details?: unknown;
+};
+
+// API handler
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<SuccessResponse | ErrorResponse>
 ) {
+  // Route handler mapping
+  const handlers: Record<string, HandlerFunction> = {
+    GET: handleGet,
+    POST: handlePost,
+    // Add other methods as needed
+  };
+
   try {
-    // Validate request
-    const validation = validateRequest(req);
-    if (!validation.isValid) {
-      return res.status(400).json({ errors: validation.errors });
+    const handler = handlers[req.method as string];
+    if (!handler) {
+      throw new ApiError(405, 'Method not allowed');
     }
 
-    // Handle different HTTP methods
-    switch (req.method) {
-      case 'GET':
-        return handleGet(req, res);
-      case 'POST':
-        return handlePost(req, res);
-      case 'PUT':
-        return handlePut(req, res);
-      case 'DELETE':
-        return handleDelete(req, res);
-      default:
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
+    await handler(req, res);
   } catch (error) {
-    return handleError(res, error as Error | ApiError);
+    handleError(error, res);
   }
+}
+
+// GET handler
+async function handleGet(
+  req: NextApiRequest,
+  res: NextApiResponse<SuccessResponse>
+) {
+  // Implement GET logic
+  res.status(200).json({ data: 'Success' });
+}
+
+// POST handler
+async function handlePost(
+  req: NextApiRequest,
+  res: NextApiResponse<SuccessResponse>
+) {
+  // Validate request
+  const validation = await validateRequest(req, requestSchema);
+  if (!validation.success) {
+    throw new ApiError(400, validation.error || 'Invalid request');
+  }
+
+  // Implement POST logic with validated data
+  const { data } = validation.data;
+  res.status(200).json({ data });
 }
