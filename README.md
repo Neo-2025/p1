@@ -1,3 +1,1 @@
-# SmartScale S4 Project
-
-*Intentionally blank* 
+# p1
