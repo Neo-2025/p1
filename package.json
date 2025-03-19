@@ -15,18 +15,14 @@
     "test:coverage": "jest --coverage",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
-    
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
     "db:seed": "node scripts/seed-db.js",
     "db:migrate": "drizzle-kit generate:pg",
-    
     "stripe:sync": "node scripts/stripe-sync.js",
     "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
-    
     "vercel:env:pull": "vercel env pull .env.local",
     "vercel:deploy": "vercel --prod",
-    
     "prepare": "husky install"
   },
   "dependencies": {
