@@ -5,11 +5,11 @@ import { redirect } from 'next/navigation';
 export default async function Home() {
   const supabase = createServerComponentClient({ cookies });
   
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getSession();
   
-  if (session) {
+  if (data?.session) {
     redirect('/dashboard');
+  } else {
+    redirect('/auth/login');
   }
-
-  redirect('/auth/login');
 } 
