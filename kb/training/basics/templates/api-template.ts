@@ -70,6 +70,5 @@ async function handlePost(
   }
 
   // Implement POST logic with validated data
-  const { data } = validation.data;
-  res.status(200).json({ data });
+  res.status(200).json({ data: validation.data.data });
 }
