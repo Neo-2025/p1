@@ -374,112 +374,267 @@ evaluation:
 # Feature Truncation Guidelines
 truncation:
   rules:
-    - "Remove non-essential UI polish"
-    - "Defer advanced analytics"
-    - "Simplify data models"
-    - "Use basic authentication"
-  exceptions:
-    - "Core security features"
-    - "Essential user flows"
-    - "Critical business logic"
+    - "Remove non-essential features"
+    - "Simplify complex workflows"
+    - "Defer nice-to-have features"
+    - "Focus on core value delivery"
+  limits:
+    features: "max_10"
+    complexity: "max_M"
+    dependencies: "max_5"
+    technical_debt: "max_20%"
 ```
 
-### Story Dependencies
+## Addendum: AI Prompt Engineering Guide
 
+### Core Principles
+
+1. **Context-First Approach**
+   - Provide relevant background information
+   - Specify technical constraints
+   - Include business requirements
+   - Reference existing code/patterns
+
+2. **Structured Output**
+   - Request specific formats (YAML, JSON, TypeScript)
+   - Define validation criteria
+   - Specify error handling
+   - Include testing requirements
+
+### Prompt Templates
+
+1. **Feature Implementation**
 ```yaml
-# Dependency Management
-dependencies:
-  technical:
-    - "Core UI Components"
-    - "API Infrastructure"
-    - "Authentication System"
-    - "Database Schema"
-  business:
-    - "User Registration"
-    - "Core Feature Set"
-    - "Payment Integration"
+# Feature Implementation Prompt
+prompt: |
+  Implement {feature_name} with the following requirements:
+  
+  Context:
+  - Business goal: {goal}
+  - Target users: {users}
+  - Technical stack: {stack}
+  
+  Requirements:
+  - Architecture: {architecture}
+  - Data model: {model}
+  - UI components: {components}
+  
+  Constraints:
+  - Performance: {metrics}
+  - Security: {requirements}
+  - Accessibility: {standards}
+  
+  Validation:
+  - Test coverage: {percentage}
+  - Performance benchmarks: {metrics}
+  - Security checks: {requirements}
+  
+  Output format:
+  - TypeScript interfaces
+  - Component structure
+  - API endpoints
+  - Test cases
 ```
 
-### Implementation Guidelines
-
-1. **Branch-First Development**
+2. **Code Review**
 ```yaml
-# Branch Strategy
-branching:
-  naming: "feature/US-{number}-{description}"
-  workflow:
-    - "Create feature branch"
-    - "Implement changes"
-    - "Run test suite"
-    - "Create PR"
-    - "Merge to main"
+# Code Review Prompt
+prompt: |
+  Review the following code for {component_name}:
+  
+  Code:
+  {code_snippet}
+  
+  Focus areas:
+  - Business logic correctness
+  - Performance optimization
+  - Security vulnerabilities
+  - Code maintainability
+  
+  Provide:
+  - Issue list with severity
+  - Suggested improvements
+  - Performance optimizations
+  - Security recommendations
 ```
 
-2. **Testing Requirements**
+3. **Architecture Decision**
 ```yaml
-# Testing Strategy
-testing:
-  coverage:
-    minimum: 80
-    critical_paths: 100
-  types:
-    - "Unit Tests"
-    - "Integration Tests"
-    - "E2E Tests"
-    - "Performance Tests"
-```
-
-### Success Criteria
-
-1. **Technical Validation**
-```yaml
-# Technical Success Metrics
-metrics:
-  performance:
-    - "Page load < 2s"
-    - "API response < 200ms"
-  reliability:
-    - "Uptime > 99.9%"
-    - "Error rate < 0.1%"
-  security:
-    - "OWASP compliance"
-    - "Zero critical vulnerabilities"
-```
-
-2. **Business Validation**
-```yaml
-# Business Success Metrics
-metrics:
-  user:
-    - "Registration completion > 80%"
-    - "Feature adoption > 60%"
-  revenue:
-    - "Conversion rate > 5%"
-    - "MRR growth > 20%"
+# Architecture Decision Prompt
+prompt: |
+  Evaluate architecture options for {feature_name}:
+  
+  Requirements:
+  - Scalability: {requirements}
+  - Performance: {metrics}
+  - Cost: {constraints}
+  - Maintenance: {considerations}
+  
+  Options:
+  - Option 1: {description}
+  - Option 2: {description}
+  
+  Analysis:
+  - Pros and cons
+  - Implementation complexity
+  - Maintenance overhead
+  - Cost implications
+  
+  Recommendation:
+  - Preferred option
+  - Implementation plan
+  - Migration strategy
 ```
 
 ### Best Practices
 
-1. **Story Writing**
-- Be specific and measurable
-- Include technical context
-- Define clear boundaries
-- Specify validation criteria
+1. **Prompt Structure**
+   - Start with context
+   - Define clear requirements
+   - Specify constraints
+   - Request validation
 
-2. **Suite Management**
-- Maintain story dependencies
-- Track technical debt
-- Update acceptance criteria
-- Review and refine regularly
+2. **Validation Steps**
+   - Code review checklist
+   - Test coverage requirements
+   - Performance benchmarks
+   - Security requirements
 
-3. **Implementation**
-- Follow branch-first workflow
-- Maintain test coverage
-- Document decisions
-- Monitor metrics
+3. **Iterative Refinement**
+   - Start with high-level requirements
+   - Refine based on AI responses
+   - Add specific constraints
+   - Validate against requirements
 
-4. **Validation**
-- Regular testing
-- Performance monitoring
-- Security audits
-- User feedback 
+### Common Patterns
+
+1. **Component Creation**
+```yaml
+# Component Creation Pattern
+pattern:
+  context:
+    - "Component purpose"
+    - "User interactions"
+    - "Data requirements"
+  requirements:
+    - "TypeScript interfaces"
+    - "Props validation"
+    - "State management"
+    - "Error handling"
+  validation:
+    - "Unit tests"
+    - "Integration tests"
+    - "Accessibility"
+```
+
+2. **API Development**
+```yaml
+# API Development Pattern
+pattern:
+  context:
+    - "Endpoint purpose"
+    - "Authentication"
+    - "Rate limiting"
+  requirements:
+    - "Request/response types"
+    - "Error handling"
+    - "Validation"
+  validation:
+    - "Contract tests"
+    - "Performance tests"
+    - "Security tests"
+```
+
+3. **Database Operations**
+```yaml
+# Database Operation Pattern
+pattern:
+  context:
+    - "Data model"
+    - "Relationships"
+    - "Constraints"
+  requirements:
+    - "Schema definition"
+    - "Indexes"
+    - "Migrations"
+  validation:
+    - "Data integrity"
+    - "Performance"
+    - "Scalability"
+```
+
+### Quality Assurance
+
+1. **Code Quality**
+```yaml
+# Code Quality Checklist
+checklist:
+  structure:
+    - "Clean architecture"
+    - "SOLID principles"
+    - "DRY principle"
+  testing:
+    - "Unit tests"
+    - "Integration tests"
+    - "E2E tests"
+  performance:
+    - "Load time"
+    - "Response time"
+    - "Resource usage"
+```
+
+2. **Security**
+```yaml
+# Security Checklist
+checklist:
+  authentication:
+    - "JWT implementation"
+    - "Session management"
+    - "Password handling"
+  authorization:
+    - "Role-based access"
+    - "Permission checks"
+    - "API security"
+  data:
+    - "Encryption"
+    - "Validation"
+    - "Sanitization"
+```
+
+### Troubleshooting Guide
+
+1. **Common Issues**
+```yaml
+# Issue Resolution Pattern
+pattern:
+  identification:
+    - "Error messages"
+    - "Log analysis"
+    - "Performance metrics"
+  resolution:
+    - "Root cause analysis"
+    - "Solution implementation"
+    - "Verification"
+  prevention:
+    - "Code review"
+    - "Testing"
+    - "Monitoring"
+```
+
+2. **Performance Optimization**
+```yaml
+# Performance Optimization Pattern
+pattern:
+  analysis:
+    - "Bottlenecks"
+    - "Resource usage"
+    - "Response times"
+  optimization:
+    - "Code changes"
+    - "Caching"
+    - "Database tuning"
+  validation:
+    - "Benchmarks"
+    - "Load testing"
+    - "Monitoring"
+``` 
