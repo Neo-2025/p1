@@ -1,5 +1,6 @@
 import React from 'react';
 import { ComponentProps } from '@/types';
+import { cn } from '@/lib/utils';
 
 interface Props extends ComponentProps {
   // Add component-specific props here
@@ -8,32 +9,13 @@ interface Props extends ComponentProps {
   onClick?: () => void;
 }
 
-export const ComponentName: React.FC<Props> = ({
-  className,
-  id,
-  style,
-  children,
-  title = 'Default Title',
-  description,
-  onClick,
-}) => {
-  // Add hooks here
-  const handleClick = React.useCallback(() => {
-    if (onClick) {
-      onClick();
-    }
-  }, [onClick]);
-
+export function ExampleComponent({ className, children, title }: Props) {
   return (
-    <div
-      id={id}
-      className={className}
-      style={style}
-      onClick={handleClick}
-    >
-      {title && <h2>{title}</h2>}
-      {description && <p>{description}</p>}
+    <div className={cn('p-4 rounded-lg bg-white shadow', className)}>
+      {title && <h2 className="text-lg font-semibold mb-2">{title}</h2>}
       {children}
     </div>
   );
-};
+}
+
+export default ExampleComponent;
