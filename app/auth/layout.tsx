@@ -13,12 +13,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} min-h-screen bg-gray-50`}>
-        <main className="flex min-h-screen flex-col items-center justify-center p-4">
-          {children}
-        </main>
-      </body>
-    </html>
+    <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50">
+      <div className="w-full max-w-md">
+        {children}
+      </div>
+    </div>
   );
 } 
