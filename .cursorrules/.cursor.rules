@@ -1,20 +1,11 @@
-<<<<<<< HEAD
 # Project-Specific Cursor Rules for SS4 Development
+# Note: SS4 = S4 = SmartStack v4
 
 ## Working Directory & Context
 [context]
 root_directory = "/home/neo/SS4"
 project_directory = "/home/neo/SS4/p1"
 knowledge_base = "/home/neo/SS4/kb"
-=======
-# Project-Specific Cursor Rules for S4 Development
-
-## Working Directory & Context
-[context]
-root_directory = "/home/neo/S4"
-project_directory = "/home/neo/S4/p1"
-knowledge_base = "/home/neo/S4/kb"
->>>>>>> origin/main
 
 [workflow]
 always_work_from_root = true
@@ -29,15 +20,9 @@ documentation_required = true
 
 ## Project Structure
 [structure]
-<<<<<<< HEAD
 mvp_development = "/home/neo/SS4/p1"
 documentation = "/home/neo/SS4/kb"
 templates = "/home/neo/SS4/kb/templates"
-=======
-mvp_development = "/home/neo/S4/p1"
-documentation = "/home/neo/S4/kb"
-templates = "/home/neo/S4/kb/templates"
->>>>>>> origin/main
 
 ## Dependencies
 [versions]
@@ -179,7 +164,6 @@ rules = [
         "script": "net start com.docker.service",
         "description": "Start Docker service"
     }
-<<<<<<< HEAD
 ]
 
 ## GitHub Workflow Rules
@@ -238,7 +222,8 @@ env_vars = {
 [workflow.gitops]
 base_path = "neo@A-AA-9FNSHM2:~/SS4/p1"
 command_execution = "path_required"
-path_validation = true 
-=======
-] 
->>>>>>> origin/main
+path_validation = true
+
+## SS4 Integration Points
+
+### 1. Story Management 
