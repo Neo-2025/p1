@@ -8,12 +8,16 @@ export async function middleware(req: NextRequest) {
   // Get URL information
   const requestUrl = new URL(req.url);
   const isAuthRoute = requestUrl.pathname.startsWith('/auth');
-  const isDashboardRoute = requestUrl.pathname === '/dashboard'; // Only exact dashboard match, not nested routes
-  const isSubscriptionRoute = requestUrl.pathname.startsWith('/subscription');
-  
-  // Skip authentication for dashboard root for now to enable testing
+  const isDashboardRoute = requestUrl.pathname === '/dashboard';
+  const isSubscriptionRoute = requestUrl.pathname === '/subscription';
+
+  // Redirect to static HTML files for these routes
   if (isDashboardRoute) {
-    return res;
+    return NextResponse.redirect(new URL('/dashboard.html', req.url));
+  }
+
+  if (isSubscriptionRoute) {
+    return NextResponse.redirect(new URL('/subscription.html', req.url));
   }
 
   // For all other protected routes, perform auth checks
@@ -21,13 +25,13 @@ export async function middleware(req: NextRequest) {
     const supabase = createMiddlewareClient({ req, res });
     const { data: { session } } = await supabase.auth.getSession();
 
-    // Check session for subscription and nested dashboard routes
-    if (!session && (isSubscriptionRoute || requestUrl.pathname.startsWith('/dashboard/'))) {
+    // Check session for nested dashboard routes
+    if (!session && requestUrl.pathname.startsWith('/dashboard/')) {
       return NextResponse.redirect(new URL('/auth/login', req.url));
     }
 
     if (session && isAuthRoute) {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
+      return NextResponse.redirect(new URL('/dashboard.html', req.url));
     }
   } catch (error) {
     console.error('Middleware error:', error);
@@ -42,7 +46,9 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     // CURRENT: Protected routes for single user
+    '/dashboard',
     '/dashboard/:path*',
+    '/subscription',
     '/subscription/:path*',
     '/auth/:path*',
 
