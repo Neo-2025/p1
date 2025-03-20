@@ -14,6 +14,8 @@ export default function LoginForm({ initialError }: LoginFormProps) {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loginMode, setLoginMode] = useState<'password' | 'magic'>('password');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const router = useRouter();
   const supabase = createClientComponentClient();
   
@@ -116,7 +118,7 @@ export default function LoginForm({ initialError }: LoginFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
       {/* Error message */}
       {error && (
         <div className="bg-red-50 text-red-500 p-3 rounded">
@@ -139,53 +141,43 @@ export default function LoginForm({ initialError }: LoginFormProps) {
         </div>
       )}
       
-      <div className="rounded-md shadow-sm">
-        <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email address
-          </label>
+      <div className="flex flex-col">
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="p-2 border rounded"
+        />
+      </div>
+      
+      {/* Password field - only shown in password mode */}
+      {loginMode === 'password' && (
+        <div className="flex flex-col">
+          <label htmlFor="password">Password</label>
           <input
-            id="email"
-            name="email"
-            type="email"
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
-            className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Email address"
-            defaultValue="bracketmaster@proton.me"
+            className="p-2 border rounded"
           />
         </div>
-        
-        {/* Password field - only shown in password mode */}
-        {loginMode === 'password' && (
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Password"
-              defaultValue="Episode1!"  // Pre-filled for debugging only
-            />
-          </div>
-        )}
-      </div>
+      )}
 
-      <div>
-        <button
-          type="submit"
-          disabled={loading}
-          className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-            loading ? 'opacity-50 cursor-not-allowed' : ''
-          }`}
-          onClick={() => console.log('Login button clicked')}
-        >
-          {loading ? 'Processing...' : loginMode === 'password' ? 'Sign in' : 'Send Magic Link'}
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+          loading ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
+        onClick={() => console.log('Login button clicked')}
+      >
+        {loading ? 'Processing...' : loginMode === 'password' ? 'Sign in' : 'Send Magic Link'}
+      </button>
       
       {/* Login mode toggle */}
       <div className="text-center">
