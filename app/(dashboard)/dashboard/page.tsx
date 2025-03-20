@@ -17,11 +17,21 @@ export default async function DashboardPage() {
   }
 
   // Get user's subscription information
-  const subscriptionService = getServerSubscriptionService();
-  const subscription = await subscriptionService.getUserSubscription(user.id);
-  
-  // If user doesn't have a subscription yet, create a free one
-  const userSubscription = subscription || await subscriptionService.createFreeSubscription(user.id);
+  let userSubscription = null;
+  try {
+    const subscriptionService = getServerSubscriptionService();
+    const subscription = await subscriptionService.getUserSubscription(user.id);
+    
+    // If user doesn't have a subscription yet, create a free one
+    userSubscription = subscription || await subscriptionService.createFreeSubscription(user.id);
+  } catch (error) {
+    console.error('Error fetching subscription:', error);
+    // Create a default freemium subscription object for display purposes
+    userSubscription = {
+      tier: 'free',
+      status: 'active'
+    };
+  }
   
   return (
     <main className="p-4 sm:p-6 lg:p-8">
