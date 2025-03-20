@@ -3,17 +3,24 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+/**
+ * StaticDashboard Component
+ * 
+ * NOTE: This is a temporary workaround implementation using client components to bypass 
+ * server-side rendering errors. This approach will need further development to:
+ * 1. Properly fetch and display user-specific data
+ * 2. Implement proper authentication checks
+ * 3. Reintegrate with server components when SSR issues are resolved
+ * 4. Add dynamic functionality for user interactions
+ * 
+ * The current static implementation is functional but limited in features.
+ * See SAAS_TEMPLATE_STATUS.md for more details on the implementation strategy.
+ */
 export default function StaticDashboard() {
   const router = useRouter();
   
-  // Simple sign out function
-  const handleSignOut = async () => {
-    try {
-      // We'll just redirect to login page for now
-      router.push('/auth/login');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+  const handleSignOut = () => {
+    router.push('/auth/login');
   };
 
   return (
@@ -75,12 +82,6 @@ export default function StaticDashboard() {
                   <p className="mt-3 text-sm text-gray-600">
                     You're currently on the Free plan. Enjoy basic features to get you started.
                   </p>
-                  <Link
-                    href="/subscription"
-                    className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
-                  >
-                    Manage Subscription
-                  </Link>
                 </div>
               </div>
             </div>
@@ -89,79 +90,14 @@ export default function StaticDashboard() {
             <div className="bg-white overflow-hidden shadow rounded-lg">
               <div className="px-4 py-5 sm:p-6">
                 <h2 className="text-lg font-medium text-gray-900">Account Information</h2>
-                <dl className="mt-3 space-y-2">
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Email</dt>
-                    <dd className="mt-1 text-sm text-gray-900">user@example.com</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Account Type</dt>
-                    <dd className="mt-1 text-sm text-gray-900">Individual</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Member Since</dt>
-                    <dd className="mt-1 text-sm text-gray-900">January 2023</dd>
-                  </div>
-                </dl>
-              </div>
-            </div>
-          </div>
-
-          {/* Features Section */}
-          <div className="mt-8">
-            <h2 className="text-lg font-medium text-gray-900">Available Features</h2>
-            <div className="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-md font-medium text-gray-900">Projects</h3>
-                  <p className="mt-1 text-sm text-gray-600">Create up to 3 projects with the Free plan.</p>
-                </div>
-              </div>
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-md font-medium text-gray-900">Storage</h3>
-                  <p className="mt-1 text-sm text-gray-600">5GB of storage included.</p>
-                </div>
-              </div>
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-md font-medium text-gray-900">Support</h3>
-                  <p className="mt-1 text-sm text-gray-600">Community support via documentation and forums.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Upgrade CTA */}
-          <div className="mt-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg overflow-hidden">
-            <div className="px-4 py-6 sm:p-6 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <h3 className="text-xl font-semibold text-white">Ready to upgrade?</h3>
-                <p className="mt-2 text-sm text-indigo-100">
-                  More features coming soon! You'll be the first to know when premium plans are available.
+                <p className="mt-3 text-sm text-gray-600">
+                  User account information will be displayed here in future updates.
                 </p>
-              </div>
-              <div className="mt-4 sm:mt-0">
-                <button
-                  disabled
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-indigo-50 opacity-70 cursor-not-allowed"
-                >
-                  Premium Plans Coming Soon
-                </button>
               </div>
             </div>
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white mt-auto py-6 border-t">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-sm text-gray-500 text-center">
-            &copy; {new Date().getFullYear()} SmartScale. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 } 

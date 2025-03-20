@@ -2,60 +2,63 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+/**
+ * TEMPORARY WORKAROUND: Static HTML Redirection
+ * 
+ * This redirection to static HTML files is a temporary solution to bypass 
+ * server-side rendering errors in the dashboard and subscription pages.
+ * 
+ * TODO: Future improvements needed:
+ * - Reimplement using Next.js server components once issues are resolved
+ * - Add proper authentication checks for these routes
+ * - Implement dynamic data fetching for user-specific content
+ * - Remove this redirection once a proper solution is in place
+ */
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  
   // Get URL information
   const requestUrl = new URL(req.url);
-  const isAuthRoute = requestUrl.pathname.startsWith('/auth');
-  const isDashboardRoute = requestUrl.pathname === '/dashboard';
-  const isSubscriptionRoute = requestUrl.pathname === '/subscription';
-
-  // Redirect to static HTML files for these routes
-  if (isDashboardRoute) {
+  const path = requestUrl.pathname;
+  
+  // Simple redirects to static HTML files
+  if (path === '/dashboard') {
     return NextResponse.redirect(new URL('/dashboard.html', req.url));
   }
-
-  if (isSubscriptionRoute) {
+  
+  if (path === '/subscription') {
     return NextResponse.redirect(new URL('/subscription.html', req.url));
   }
-
-  // For all other protected routes, perform auth checks
-  try {
-    const supabase = createMiddlewareClient({ req, res });
-    const { data: { session } } = await supabase.auth.getSession();
-
-    // Check session for nested dashboard routes
-    if (!session && requestUrl.pathname.startsWith('/dashboard/')) {
+  
+  // For other routes, proceed normally
+  const res = NextResponse.next();
+  
+  // Handle auth pages
+  const isAuthPage = path.startsWith('/auth');
+  
+  // Basic session check for protected routes
+  if (!isAuthPage && (path.startsWith('/dashboard/') || path.startsWith('/subscription/'))) {
+    try {
+      const supabase = createMiddlewareClient({ req, res });
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        return NextResponse.redirect(new URL('/auth/login', req.url));
+      }
+    } catch (error) {
+      // If auth check fails, redirect to login
       return NextResponse.redirect(new URL('/auth/login', req.url));
     }
-
-    if (session && isAuthRoute) {
-      return NextResponse.redirect(new URL('/dashboard.html', req.url));
-    }
-  } catch (error) {
-    console.error('Middleware error:', error);
-    // Fall back to allowing the request through on errors
-    return res;
   }
-
+  
   return res;
 }
 
 // Configure which routes use this middleware
 export const config = {
   matcher: [
-    // CURRENT: Protected routes for single user
     '/dashboard',
     '/dashboard/:path*',
     '/subscription',
     '/subscription/:path*',
     '/auth/:path*',
-
-    // FUTURE ROUTES:
-    // '/api/protected/:path*',
-    // '/admin/:path*',
-    // '/settings/:path*',
-    // '/organization/:path*',
   ],
 }; 
