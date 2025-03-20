@@ -1,13 +1,47 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cn } from '@/lib/utils';
 
 export default function DashboardNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  
+  const supabase = createClientComponentClient();
+  
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Auth error:', error);
+          router.push('/auth/login');
+          return;
+        }
+        
+        if (!session) {
+          router.push('/auth/login');
+          return;
+        }
+        
+        setUserEmail(session.user?.email || null);
+      } catch (err) {
+        console.error('Failed to check auth status:', err);
+        router.push('/auth/login');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    checkAuth();
+  }, [router, supabase]);
   
   const navItems = [
     { name: 'Dashboard', href: '/dashboard' },
@@ -19,6 +53,34 @@ export default function DashboardNav() {
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(`${path}/`);
   };
+  
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.push('/auth/login');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
+  
+  if (isLoading) {
+    return (
+      <nav className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <span className="text-blue-600 font-bold text-xl">SmartScale</span>
+              </div>
+              <div className="hidden md:block">
+                <div className="animate-pulse ml-10 h-4 w-64 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
   
   return (
     <nav className="bg-white shadow">
@@ -55,14 +117,15 @@ export default function DashboardNav() {
           </div>
           <div className="hidden md:block">
             <div className="ml-4 flex items-center md:ml-6">
-              <form action="/auth/signout" method="post">
-                <button
-                  type="submit"
-                  className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Sign Out
-                </button>
-              </form>
+              {userEmail && (
+                <span className="text-sm text-gray-600 mr-4">{userEmail}</span>
+              )}
+              <button
+                onClick={handleSignOut}
+                className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Sign Out
+              </button>
             </div>
           </div>
           <div className="-mr-2 flex md:hidden">
@@ -113,14 +176,12 @@ export default function DashboardNav() {
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="px-2 space-y-1">
-              <form action="/auth/signout" method="post">
-                <button
-                  type="submit"
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                >
-                  Sign Out
-                </button>
-              </form>
+              <button
+                onClick={handleSignOut}
+                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Sign Out
+              </button>
             </div>
           </div>
         </div>
