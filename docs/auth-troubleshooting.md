@@ -6,20 +6,25 @@ The login page initially had a non-functional login button with no feedback or r
 ## Current State of Authentication
 
 ### Authentication Flow
-1. The login page (`/auth/login`) presents a form with email and password fields
-2. Form submission attempts to authenticate using Supabase client
+1. The login page (`/auth/login`) presents a form with two authentication options:
+   - Password-based authentication
+   - Magic link (passwordless) authentication
+2. Form submission authenticates using Supabase client
 3. On successful authentication, a session is created and user is redirected to dashboard
-4. Middleware protects routes based on authentication state
+4. For magic links, an email is sent and the user completes authentication by clicking the link
+5. Middleware protects routes based on authentication state
 
 ### Authentication Components
-- **LoginForm.tsx**: Client-side form handling authentication
+- **LoginForm.tsx**: Client-side form handling authentication (password & magic link)
 - **middleware.ts**: Protects dashboard and subscription routes
 - **seed-db.js**: Creates/updates the default user
+- **callback/route.ts**: Handles magic link callbacks and session creation
 
 ### Supabase Integration
 - Authentication is connected to Supabase Auth service
 - User data is stored in Supabase Auth tables
 - Environmental variables control the connection to Supabase
+- OTP (One-Time Password) support for magic links
 
 ## Identified Issues and Fixes
 
@@ -42,20 +47,34 @@ The login page initially had a non-functional login button with no feedback or r
 - Explicitly configured dotenv to load .env.local
 - Added environment variable validation to scripts
 
+### 4. Magic Link Authentication
+**Addition**: Implemented passwordless authentication via magic links
+- Added toggle between password and magic link authentication
+- Created callback route handler for processing magic links
+- Added success messages for magic link emails
+- Set up error handling for the magic link flow
+
 ## How to Verify Authentication Works
 
-1. **Test API Endpoint**:
+1. **Password Authentication**:
+   - Email: bracketmaster@proton.me
+   - Password: Episode1!
+
+2. **Magic Link Authentication**:
+   - Enter email: bracketmaster@proton.me
+   - Click "Send Magic Link"
+   - Check email for magic link
+   - Click link to complete authentication
+   - User is redirected to dashboard
+
+3. **Test API Endpoint**:
    Access `/api/auth/test` to verify Supabase connection and auth configuration
 
-2. **Run Seed Script**:
+4. **Run Seed Script**:
    ```bash
    node scripts/seed-db.js
    ```
    This ensures the test user exists with correct credentials
-
-3. **Login Credentials**:
-   - Email: bracketmaster@proton.me
-   - Password: Episode1!
 
 ## Future Enhancements
 
@@ -63,6 +82,7 @@ The login page initially had a non-functional login button with no feedback or r
 2. **Password Reset Flow**: Implement a password reset process
 3. **MFA Support**: Add multi-factor authentication when needed
 4. **OAuth Providers**: Support third-party login (Google, GitHub, etc.)
+5. **Email Templates**: Customize magic link email templates
 
 ## Testing Notes
 
@@ -71,5 +91,6 @@ When testing the authentication flow, monitor:
 2. Network requests to Supabase endpoints
 3. Server logs for authentication errors
 4. Debug info displayed on the login form
+5. Email delivery for magic links
 
-The current implementation focuses on a single hard-coded user for simplicity while preserving the infrastructure for multi-user authentication in the future. 
+The current implementation supports both password-based authentication and magic links while preserving the infrastructure for future multi-user authentication. 

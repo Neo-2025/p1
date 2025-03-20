@@ -1,28 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useRouter } from 'next/navigation';
 
-export default function LoginForm() {
-  const [error, setError] = useState<string | null>(null);
+interface LoginFormProps {
+  initialError?: string | null;
+}
+
+export default function LoginForm({ initialError }: LoginFormProps) {
+  const [error, setError] = useState<string | null>(initialError || null);
   const [loading, setLoading] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loginMode, setLoginMode] = useState<'password' | 'magic'>('password');
   const router = useRouter();
   const supabase = createClientComponentClient();
+  
+  // Update error if initialError changes
+  useEffect(() => {
+    if (initialError) {
+      setError(initialError);
+    }
+  }, [initialError]);
 
-  // CURRENT: Single user login
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Form submitted');
     setError(null);
     setDebugInfo(null);
+    setSuccessMessage(null);
     setLoading(true);
 
     try {
       const formData = new FormData(e.currentTarget);
       const email = formData.get('email') as string;
-      const password = formData.get('password') as string;
 
       console.log(`Attempting login with email: ${email}`);
       setDebugInfo(`Attempting login with: ${email}`);
@@ -36,31 +49,56 @@ export default function LoginForm() {
         return;
       }
 
-      // Log before Supabase call
-      console.log('Calling Supabase auth.signInWithPassword...');
-      setDebugInfo('Calling Supabase authentication...');
-      
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      if (loginMode === 'password') {
+        const password = formData.get('password') as string;
 
-      // Log after Supabase call
-      console.log('Supabase auth call completed');
-      
-      if (signInError) {
-        console.error('Supabase error:', signInError);
-        setDebugInfo(`Supabase error: ${signInError.message}`);
-        throw signInError;
+        // Log before Supabase call
+        console.log('Calling Supabase auth.signInWithPassword...');
+        setDebugInfo('Calling Supabase authentication...');
+        
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        // Log after Supabase call
+        console.log('Supabase auth call completed');
+        
+        if (signInError) {
+          console.error('Supabase error:', signInError);
+          setDebugInfo(`Supabase error: ${signInError.message}`);
+          throw signInError;
+        }
+
+        console.log('Login successful, session:', data.session ? 'exists' : 'missing');
+        setDebugInfo('Login successful, redirecting...');
+
+        // Successful login
+        router.refresh();
+        console.log('Router refreshed, redirecting to dashboard');
+        router.push('/dashboard');
+      } else {
+        // Magic link login
+        console.log('Sending magic link to email:', email);
+        setDebugInfo('Sending magic link...');
+        
+        const { error: magicLinkError } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+        
+        if (magicLinkError) {
+          console.error('Magic link error:', magicLinkError);
+          setDebugInfo(`Magic link error: ${magicLinkError.message}`);
+          throw magicLinkError;
+        }
+        
+        console.log('Magic link sent successfully');
+        setSuccessMessage('Magic link sent! Check your email to complete login.');
+        setDebugInfo('Magic link sent successfully');
       }
-
-      console.log('Login successful, session:', data.session ? 'exists' : 'missing');
-      setDebugInfo('Login successful, redirecting...');
-
-      // Successful login
-      router.refresh();
-      console.log('Router refreshed, redirecting to dashboard');
-      router.push('/dashboard');
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err?.message || 'Invalid credentials');
@@ -68,6 +106,13 @@ export default function LoginForm() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Toggle between password and magic link login
+  const toggleLoginMode = () => {
+    setLoginMode(loginMode === 'password' ? 'magic' : 'password');
+    setError(null);
+    setSuccessMessage(null);
   };
 
   return (
@@ -79,6 +124,13 @@ export default function LoginForm() {
         </div>
       )}
       
+      {/* Success message */}
+      {successMessage && (
+        <div className="bg-green-50 text-green-600 p-3 rounded">
+          {successMessage}
+        </div>
+      )}
+      
       {/* Debug info - only in development */}
       {debugInfo && (
         <div className="bg-blue-50 text-blue-500 p-3 rounded text-xs">
@@ -87,9 +139,9 @@ export default function LoginForm() {
         </div>
       )}
       
-      <div className="rounded-md shadow-sm -space-y-px">
-        <div>
-          <label htmlFor="email" className="sr-only">
+      <div className="rounded-md shadow-sm">
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
             Email address
           </label>
           <input
@@ -97,25 +149,29 @@ export default function LoginForm() {
             name="email"
             type="email"
             required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Email address"
             defaultValue="bracketmaster@proton.me"
           />
         </div>
-        <div>
-          <label htmlFor="password" className="sr-only">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            placeholder="Password"
-            defaultValue="Episode1!"  // Pre-filled for debugging only
-          />
-        </div>
+        
+        {/* Password field - only shown in password mode */}
+        {loginMode === 'password' && (
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              placeholder="Password"
+              defaultValue="Episode1!"  // Pre-filled for debugging only
+            />
+          </div>
+        )}
       </div>
 
       <div>
@@ -127,14 +183,27 @@ export default function LoginForm() {
           }`}
           onClick={() => console.log('Login button clicked')}
         >
-          {loading ? 'Signing in...' : 'Sign in'}
+          {loading ? 'Processing...' : loginMode === 'password' ? 'Sign in' : 'Send Magic Link'}
+        </button>
+      </div>
+      
+      {/* Login mode toggle */}
+      <div className="text-center">
+        <button
+          type="button"
+          className="text-sm text-indigo-600 hover:text-indigo-500 focus:outline-none"
+          onClick={toggleLoginMode}
+        >
+          {loginMode === 'password' 
+            ? 'Use magic link instead' 
+            : 'Use password instead'}
         </button>
       </div>
 
       {/* Help text - only in development */}
       <div className="text-xs text-gray-500 mt-4">
         <p><strong>Email:</strong> bracketmaster@proton.me</p>
-        <p><strong>Password:</strong> Episode1!</p>
+        {loginMode === 'password' && <p><strong>Password:</strong> Episode1!</p>}
       </div>
     </form>
   );

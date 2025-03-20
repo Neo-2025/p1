@@ -8,9 +8,16 @@ export const metadata = {
   description: 'Login to access your dashboard'
 };
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const supabase = createServerComponentClient({ cookies });
   const { data } = await supabase.auth.getSession();
+  
+  // Get any error from the URL (e.g., from magic link callback)
+  const errorMessage = searchParams?.error ? decodeURIComponent(searchParams.error as string) : null;
   
   // If user is already logged in, redirect to dashboard
   if (data?.session) {
@@ -24,7 +31,7 @@ export default async function LoginPage() {
           <h1 className="text-2xl font-bold">Welcome Back</h1>
           <p className="mt-2 text-gray-600">Sign in to access your dashboard</p>
         </div>
-        <LoginForm />
+        <LoginForm initialError={errorMessage} />
       </div>
     </div>
   );
