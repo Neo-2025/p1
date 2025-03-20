@@ -3,5 +3,11 @@
   "devCommand": "next dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "redirects": [
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/subscription", "destination": "/subscription.html" }
+  ],
+  "trailingSlash": false,
+  "regions": ["iad1"]
 } 
