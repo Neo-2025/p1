@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription - SmartScale</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      margin-bottom: 40px;
+    }
+    h1 {
+      color: #2563eb;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    nav a {
+      color: #6b7280;
+      text-decoration: none;
+    }
+    nav a.active {
+      color: #2563eb;
+      font-weight: 500;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .plan-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px) {
+      .plan-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .plan {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .plan.highlighted {
+      border-color: #3b82f6;
+    }
+    .plan-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .plan-price {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .plan-price span {
+      font-size: 14px;
+      font-weight: 400;
+      color: #6b7280;
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .button {
+      display: inline-block;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .button:hover {
+      background-color: #2563eb;
+    }
+    .button.disabled {
+      background-color: #e5e7eb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>SmartScale Subscription</h1>
+      <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/subscription" class="active">Subscription</a>
+        <a href="/auth/login">Sign Out</a>
+      </nav>
+    </header>
+    
+    <main>
+      <div class="card">
+        <h2>Choose Your Plan</h2>
+        <p>Select the plan that works best for you.</p>
+        
+        <div class="plan-grid">
+          <div class="plan highlighted">
+            <div class="plan-name">Free Plan</div>
+            <div class="plan-price">$0 <span>/ month</span></div>
+            <ul>
+              <li>Basic features</li>
+              <li>Limited storage</li>
+              <li>Community support</li>
+            </ul>
+            <button class="button disabled">Current Plan</button>
+          </div>
+          
+          <div class="plan">
+            <div class="plan-name">Premium Plan</div>
+            <div class="plan-price">$19 <span>/ month</span></div>
+            <ul>
+              <li>All features</li>
+              <li>Unlimited storage</li>
+              <li>Priority support</li>
+              <li>Advanced analytics</li>
+            </ul>
+            <button class="button disabled">Coming Soon</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>Billing Information</h2>
+        <p>Your billing information will appear here when you subscribe to a paid plan.</p>
+      </div>
+    </main>
+  </div>
+</body>
+</html> 

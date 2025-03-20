@@ -1,0 +1,4 @@
+# Handle redirects for OAuth callbacks
+/auth/callback*  /auth/callback   200
+/dashboard       /dashboard.html  200
+/subscription    /subscription.html 200 

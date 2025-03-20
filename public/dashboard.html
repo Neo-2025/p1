@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - SmartScale</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      margin-bottom: 40px;
+    }
+    h1 {
+      color: #2563eb;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    nav a {
+      color: #6b7280;
+      text-decoration: none;
+    }
+    nav a.active {
+      color: #2563eb;
+      font-weight: 500;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .button {
+      background: none;
+      border: 1px solid #d1d5db;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .badge {
+      display: inline-block;
+      background-color: #dbeafe;
+      color: #1e40af;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 8px;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>SmartScale Dashboard</h1>
+      <nav>
+        <a href="/dashboard" class="active">Dashboard</a>
+        <a href="/subscription">Subscription</a>
+        <a href="/auth/login">Sign Out</a>
+      </nav>
+    </header>
+    
+    <main>
+      <div class="card">
+        <h2>Your Subscription</h2>
+        <div>
+          <span class="badge">Free Plan</span>
+        </div>
+        <p>You're currently on the Free plan. Enjoy basic features to get you started.</p>
+      </div>
+      
+      <div class="card">
+        <h2>Account Information</h2>
+        <p>Static account information will appear here.</p>
+      </div>
+    </main>
+  </div>
+</body>
+</html> 
