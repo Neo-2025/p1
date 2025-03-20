@@ -13,6 +13,7 @@ export async function middleware(req: NextRequest) {
   const requestUrl = new URL(req.url);
   const isAuthRoute = requestUrl.pathname.startsWith('/auth');
   const isDashboardRoute = requestUrl.pathname.startsWith('/dashboard');
+  const isSubscriptionRoute = requestUrl.pathname.startsWith('/subscription');
 
   // FUTURE AUTH EXPANSION:
   // 1. Role-based access control
@@ -37,7 +38,7 @@ export async function middleware(req: NextRequest) {
   // check req.headers for API keys
 
   // Current simple logic: Single user check
-  if (!session && isDashboardRoute) {
+  if (!session && (isDashboardRoute || isSubscriptionRoute)) {
     // FUTURE: Add return URL for post-login redirect
     // const returnUrl = encodeURIComponent(requestUrl.pathname);
     return NextResponse.redirect(new URL('/auth/login', req.url));
@@ -55,6 +56,7 @@ export const config = {
   matcher: [
     // CURRENT: Protected routes for single user
     '/dashboard/:path*',
+    '/subscription/:path*',
     '/auth/:path*',
 
     // FUTURE ROUTES:
