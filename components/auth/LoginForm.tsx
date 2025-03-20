@@ -14,8 +14,8 @@ export default function LoginForm({ initialError }: LoginFormProps) {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loginMode, setLoginMode] = useState<'password' | 'magic'>('password');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('bracketmaster@proton.me');
+  const [password, setPassword] = useState('Episode1!');
   const router = useRouter();
   const supabase = createClientComponentClient();
   
@@ -36,34 +36,30 @@ export default function LoginForm({ initialError }: LoginFormProps) {
     setLoading(true);
 
     try {
-      const formData = new FormData(e.currentTarget);
-      const email = formData.get('email') as string;
+      // Use the state values directly
+      const submittedEmail = email.trim();
 
-      console.log(`Attempting login with email: ${email}`);
-      setDebugInfo(`Attempting login with: ${email}`);
+      console.log(`Attempting login with email: ${submittedEmail}`);
+      setDebugInfo(`Attempting login with: ${submittedEmail}`);
 
       // Simple validation for single user
-      if (email !== 'bracketmaster@proton.me') {
+      if (submittedEmail !== 'bracketmaster@proton.me') {
         console.warn('Email validation failed - not our test user');
         setError('Invalid credentials');
-        setDebugInfo(`Email validation failed - expected bracketmaster@proton.me`);
+        setDebugInfo(`Email validation failed - expected bracketmaster@proton.me, got ${submittedEmail}`);
         setLoading(false);
         return;
       }
 
       if (loginMode === 'password') {
-        const password = formData.get('password') as string;
-
-        // Log before Supabase call
         console.log('Calling Supabase auth.signInWithPassword...');
         setDebugInfo('Calling Supabase authentication...');
         
         const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: submittedEmail,
+          password: password,
         });
 
-        // Log after Supabase call
         console.log('Supabase auth call completed');
         
         if (signInError) {
@@ -75,17 +71,15 @@ export default function LoginForm({ initialError }: LoginFormProps) {
         console.log('Login successful, session:', data.session ? 'exists' : 'missing');
         setDebugInfo('Login successful, redirecting...');
 
-        // Successful login
         router.refresh();
         console.log('Router refreshed, redirecting to dashboard');
         router.push('/dashboard');
       } else {
-        // Magic link login
-        console.log('Sending magic link to email:', email);
+        console.log('Sending magic link to email:', submittedEmail);
         setDebugInfo('Sending magic link...');
         
         const { error: magicLinkError } = await supabase.auth.signInWithOtp({
-          email,
+          email: submittedEmail,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
@@ -145,6 +139,7 @@ export default function LoginForm({ initialError }: LoginFormProps) {
         <label htmlFor="email">Email</label>
         <input
           id="email"
+          name="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -159,6 +154,7 @@ export default function LoginForm({ initialError }: LoginFormProps) {
           <label htmlFor="password">Password</label>
           <input
             id="password"
+            name="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
