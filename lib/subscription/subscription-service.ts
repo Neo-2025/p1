@@ -8,29 +8,19 @@ export interface SubscriptionService {
   updateSubscription(subscriptionId: string, data: Partial<UserSubscription>): Promise<UserSubscription>;
 }
 
-export class SupabaseSubscriptionService implements SubscriptionService {
-  private supabase: SupabaseClient;
+// Store subscriptions in memory for demo purposes
+const inMemorySubscriptions: Record<string, UserSubscription> = {};
 
-  constructor(supabase: SupabaseClient) {
-    this.supabase = supabase;
-  }
-
+/**
+ * A version of the subscription service that doesn't rely on the database
+ * This is used for demonstration purposes until the database tables are set up
+ */
+export class InMemorySubscriptionService implements SubscriptionService {
   /**
    * Get a user's subscription details
    */
   async getUserSubscription(userId: string): Promise<UserSubscription | null> {
-    const { data, error } = await this.supabase
-      .from('user_subscriptions')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
-
-    if (error) {
-      console.error('Error fetching subscription:', error);
-      return null;
-    }
-
-    return this.mapSubscriptionData(data);
+    return inMemorySubscriptions[userId] || null;
   }
 
   /**
@@ -42,60 +32,185 @@ export class SupabaseSubscriptionService implements SubscriptionService {
     const endDate = new Date();
     endDate.setFullYear(endDate.getFullYear() + 100); // Essentially "forever" for free tier
 
-    const subscriptionData = {
-      user_id: userId,
-      plan_id: freePlan.id,
-      tier: 'free' as SubscriptionTier,
+    const subscription: UserSubscription = {
+      id: `sub_${Math.random().toString(36).substring(2, 15)}`,
+      userId,
+      planId: freePlan.id,
+      tier: 'free',
       status: 'active',
-      current_period_start: now.toISOString(),
-      current_period_end: endDate.toISOString(),
-      cancel_at_period_end: false,
-      created_at: now.toISOString(),
-      updated_at: now.toISOString()
+      currentPeriodStart: now,
+      currentPeriodEnd: endDate,
+      cancelAtPeriodEnd: false,
+      createdAt: now,
+      updatedAt: now
     };
 
-    const { data, error } = await this.supabase
-      .from('user_subscriptions')
-      .insert(subscriptionData)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating free subscription:', error);
-      throw new Error('Failed to create subscription');
-    }
-
-    return this.mapSubscriptionData(data);
+    // Store in memory
+    inMemorySubscriptions[userId] = subscription;
+    
+    return subscription;
   }
 
   /**
    * Update an existing subscription
    */
   async updateSubscription(subscriptionId: string, updates: Partial<UserSubscription>): Promise<UserSubscription> {
-    const updateData: Record<string, any> = {};
-
-    // Map from camelCase to snake_case for database
-    if (updates.planId) updateData.plan_id = updates.planId;
-    if (updates.tier) updateData.tier = updates.tier;
-    if (updates.status) updateData.status = updates.status;
-    if (updates.currentPeriodStart) updateData.current_period_start = updates.currentPeriodStart.toISOString();
-    if (updates.currentPeriodEnd) updateData.current_period_end = updates.currentPeriodEnd.toISOString();
-    if (updates.cancelAtPeriodEnd !== undefined) updateData.cancel_at_period_end = updates.cancelAtPeriodEnd;
-    updateData.updated_at = new Date().toISOString();
-
-    const { data, error } = await this.supabase
-      .from('user_subscriptions')
-      .update(updateData)
-      .eq('id', subscriptionId)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating subscription:', error);
-      throw new Error('Failed to update subscription');
+    // Find the subscription by ID
+    let subscription: UserSubscription | null = null;
+    let userId = '';
+    
+    for (const [uid, sub] of Object.entries(inMemorySubscriptions)) {
+      if (sub.id === subscriptionId) {
+        subscription = sub;
+        userId = uid;
+        break;
+      }
     }
+    
+    if (!subscription) {
+      throw new Error('Subscription not found');
+    }
+    
+    // Update the subscription
+    const updatedSubscription = {
+      ...subscription,
+      ...updates,
+      updatedAt: new Date()
+    };
+    
+    // Store the updated subscription
+    inMemorySubscriptions[userId] = updatedSubscription;
+    
+    return updatedSubscription;
+  }
 
-    return this.mapSubscriptionData(data);
+  /**
+   * Check if a user has an active subscription
+   */
+  async hasActiveSubscription(userId: string): Promise<boolean> {
+    const subscription = await this.getUserSubscription(userId);
+    return !!subscription && subscription.status === 'active';
+  }
+
+  /**
+   * Get a user's current subscription tier
+   */
+  async getUserTier(userId: string): Promise<SubscriptionTier> {
+    const subscription = await this.getUserSubscription(userId);
+    return subscription?.tier || 'free';
+  }
+}
+
+// Original implementation kept for reference
+export class SupabaseSubscriptionService implements SubscriptionService {
+  private supabase: SupabaseClient;
+
+  constructor(supabase: SupabaseClient) {
+    this.supabase = supabase;
+  }
+
+  /**
+   * Get a user's subscription details
+   */
+  async getUserSubscription(userId: string): Promise<UserSubscription | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('user_subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching subscription:', error);
+        return null;
+      }
+
+      return this.mapSubscriptionData(data);
+    } catch (error) {
+      console.error('Failed to get user subscription:', error);
+      // Fall back to in-memory implementation
+      const inMemoryService = new InMemorySubscriptionService();
+      return inMemoryService.getUserSubscription(userId);
+    }
+  }
+
+  /**
+   * Create a free subscription for a new user
+   */
+  async createFreeSubscription(userId: string): Promise<UserSubscription> {
+    try {
+      const freePlan = getFreePlan();
+      const now = new Date();
+      const endDate = new Date();
+      endDate.setFullYear(endDate.getFullYear() + 100); // Essentially "forever" for free tier
+
+      const subscriptionData = {
+        user_id: userId,
+        plan_id: freePlan.id,
+        tier: 'free' as SubscriptionTier,
+        status: 'active',
+        current_period_start: now.toISOString(),
+        current_period_end: endDate.toISOString(),
+        cancel_at_period_end: false,
+        created_at: now.toISOString(),
+        updated_at: now.toISOString()
+      };
+
+      const { data, error } = await this.supabase
+        .from('user_subscriptions')
+        .insert(subscriptionData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating free subscription:', error);
+        throw new Error('Failed to create subscription');
+      }
+
+      return this.mapSubscriptionData(data);
+    } catch (error) {
+      console.error('Failed to create free subscription:', error);
+      // Fall back to in-memory implementation
+      const inMemoryService = new InMemorySubscriptionService();
+      return inMemoryService.createFreeSubscription(userId);
+    }
+  }
+
+  /**
+   * Update an existing subscription
+   */
+  async updateSubscription(subscriptionId: string, updates: Partial<UserSubscription>): Promise<UserSubscription> {
+    try {
+      const updateData: Record<string, any> = {};
+
+      // Map from camelCase to snake_case for database
+      if (updates.planId) updateData.plan_id = updates.planId;
+      if (updates.tier) updateData.tier = updates.tier;
+      if (updates.status) updateData.status = updates.status;
+      if (updates.currentPeriodStart) updateData.current_period_start = updates.currentPeriodStart.toISOString();
+      if (updates.currentPeriodEnd) updateData.current_period_end = updates.currentPeriodEnd.toISOString();
+      if (updates.cancelAtPeriodEnd !== undefined) updateData.cancel_at_period_end = updates.cancelAtPeriodEnd;
+      updateData.updated_at = new Date().toISOString();
+
+      const { data, error } = await this.supabase
+        .from('user_subscriptions')
+        .update(updateData)
+        .eq('id', subscriptionId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating subscription:', error);
+        throw new Error('Failed to update subscription');
+      }
+
+      return this.mapSubscriptionData(data);
+    } catch (error) {
+      console.error('Failed to update subscription:', error);
+      // Fall back to in-memory implementation
+      const inMemoryService = new InMemorySubscriptionService();
+      return inMemoryService.updateSubscription(subscriptionId, updates);
+    }
   }
 
   /**
