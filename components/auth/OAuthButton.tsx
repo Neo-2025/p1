@@ -15,10 +15,15 @@ export default function OAuthButton({ provider, className = '' }: OAuthButtonPro
   const handleSignIn = async () => {
     try {
       setLoading(true);
+      
+      // Get the base URL - prioritize VERCEL_URL for production or deployed previews
+      const baseUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || 
+                     (typeof window !== 'undefined' ? window.location.origin : '');
+      
       await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${baseUrl}/auth/callback`,
         },
       });
     } catch (error) {

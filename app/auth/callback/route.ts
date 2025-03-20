@@ -13,17 +13,23 @@ export async function GET(request: NextRequest) {
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
   
+  // Get the site URL from the request or environment
+  const baseUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || 
+                  process.env.VERCEL_URL ? 
+                  `https://${process.env.VERCEL_URL}` : 
+                  requestUrl.origin;
+  
   // If there's an error, redirect to login with the error
   if (error) {
     const errorMsg = errorDescription || 'Authentication failed';
     return NextResponse.redirect(
-      new URL(`/auth/login?error=${encodeURIComponent(errorMsg)}`, request.url)
+      `${baseUrl}/auth/login?error=${encodeURIComponent(errorMsg)}`
     );
   }
   
   // If there's no code, this is not a valid callback
   if (!code) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
+    return NextResponse.redirect(`${baseUrl}/auth/login`);
   }
   
   try {
@@ -34,13 +40,13 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code);
     
     // Redirect to dashboard after successful login
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(`${baseUrl}/dashboard`);
   } catch (error) {
     console.error('Error processing authentication callback:', error);
     
     // Redirect to login page with error
     return NextResponse.redirect(
-      new URL('/auth/login?error=Authentication+failed', request.url)
+      `${baseUrl}/auth/login?error=Authentication+failed`
     );
   }
 } 
