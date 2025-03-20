@@ -3,230 +3,164 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Subscription - SmartScale SaaS</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Subscription - SmartScale</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      margin-bottom: 40px;
+    }
+    h1 {
+      color: #2563eb;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    nav a {
+      color: #6b7280;
+      text-decoration: none;
+    }
+    nav a.active {
+      color: #2563eb;
+      font-weight: 500;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 20px;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    .plan-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 640px) {
+      .plan-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .plan {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .plan.highlighted {
+      border-color: #3b82f6;
+    }
+    .plan-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .plan-price {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .plan-price span {
+      font-size: 14px;
+      font-weight: 400;
+      color: #6b7280;
+    }
+    ul {
+      padding-left: 20px;
+      margin-bottom: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .button {
+      display: inline-block;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .button:hover {
+      background-color: #2563eb;
+    }
+    .button.disabled {
+      background-color: #e5e7eb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
-  <!-- Header -->
-  <header class="bg-white shadow">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <span class="text-blue-600 font-bold text-xl">SmartScale</span>
-        </div>
-        <nav class="ml-10 flex space-x-4">
-          <a href="/dashboard.html" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-            Dashboard
-          </a>
-          <a href="/subscription.html" class="bg-blue-50 text-blue-700 px-3 py-2 rounded-md text-sm font-medium">
-            Subscription
-          </a>
-        </nav>
-      </div>
-      <div>
-        <a href="/auth/login" class="border border-gray-300 text-gray-700 hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium">
-          Sign Out
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main content -->
-  <main class="py-10 flex-grow">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div class="px-4 sm:px-0">
-        <h1 class="text-3xl font-bold text-gray-900">Manage Your Subscription</h1>
-        <p class="mt-2 text-sm text-gray-600">
-          View and manage your current subscription plan.
-        </p>
-      </div>
-
-      <!-- Current Plan -->
-      <div class="mt-6 bg-white shadow overflow-hidden sm:rounded-lg">
-        <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-          <h2 class="text-lg leading-6 font-medium text-gray-900">Current Plan</h2>
-          <p class="mt-1 max-w-2xl text-sm text-gray-500">Details about your current subscription.</p>
-        </div>
-        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-          <div class="flex items-center">
-            <div class="bg-blue-100 rounded-full px-3 py-1">
-              <span class="text-xs font-medium text-blue-800">Free Plan</span>
-            </div>
-            <span class="ml-2 text-sm text-gray-500">Active</span>
+<body>
+  <div class="container">
+    <header>
+      <h1>SmartScale Subscription</h1>
+      <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/subscription" class="active">Subscription</a>
+        <a href="/auth/login">Sign Out</a>
+      </nav>
+    </header>
+    
+    <main>
+      <div class="card">
+        <h2>Choose Your Plan</h2>
+        <p>Select the plan that works best for you.</p>
+        
+        <div class="plan-grid">
+          <div class="plan highlighted">
+            <div class="plan-name">Free Plan</div>
+            <div class="plan-price">$0 <span>/ month</span></div>
+            <ul>
+              <li>Basic features</li>
+              <li>Limited storage</li>
+              <li>Community support</li>
+            </ul>
+            <button class="button disabled">Current Plan</button>
           </div>
           
-          <dl class="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <div class="sm:col-span-1">
-              <dt class="text-sm font-medium text-gray-500">Billing Period</dt>
-              <dd class="mt-1 text-sm text-gray-900">N/A - Free Plan</dd>
-            </div>
-            <div class="sm:col-span-1">
-              <dt class="text-sm font-medium text-gray-500">Next Payment</dt>
-              <dd class="mt-1 text-sm text-gray-900">N/A - Free Plan</dd>
-            </div>
-            <div class="sm:col-span-1">
-              <dt class="text-sm font-medium text-gray-500">Plan Features</dt>
-              <dd class="mt-1 text-sm text-gray-900">Basic</dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-
-      <!-- Available Plans -->
-      <div class="mt-8">
-        <h2 class="text-lg font-medium text-gray-900">Available Plans</h2>
-        <p class="text-sm text-gray-500 mt-1">Choose a plan that fits your needs.</p>
-
-        <div class="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <!-- Free Plan -->
-          <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200 bg-white">
-            <div class="p-6">
-              <h3 class="text-lg font-medium text-gray-900">Free</h3>
-              <p class="mt-1 text-sm text-gray-500">Get started with basic features</p>
-              <p class="mt-4">
-                <span class="text-4xl font-extrabold text-gray-900">$0</span>
-                <span class="text-base font-medium text-gray-500">/mo</span>
-              </p>
-              <p class="mt-4">
-                <span class="bg-green-100 text-green-800 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                  Current Plan
-                </span>
-              </p>
-            </div>
-            <div class="pt-6 pb-8 px-6">
-              <h4 class="text-sm font-medium text-gray-900 tracking-wide">What's included</h4>
-              <ul class="mt-4 space-y-3">
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Up to 3 projects</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">5GB of storage</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Community support</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Pro Plan (Coming Soon) -->
-          <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200 bg-white">
-            <div class="p-6">
-              <h3 class="text-lg font-medium text-gray-900">Pro</h3>
-              <p class="mt-1 text-sm text-gray-500">For growing teams and projects</p>
-              <p class="mt-4">
-                <span class="text-4xl font-extrabold text-gray-900">$19</span>
-                <span class="text-base font-medium text-gray-500">/mo</span>
-              </p>
-              <p class="mt-4">
-                <span class="bg-gray-100 text-gray-800 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                  Coming Soon
-                </span>
-              </p>
-            </div>
-            <div class="pt-6 pb-8 px-6">
-              <h4 class="text-sm font-medium text-gray-900 tracking-wide">What's included</h4>
-              <ul class="mt-4 space-y-3">
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Up to 10 projects</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">20GB of storage</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">API access</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Priority support</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Enterprise Plan (Coming Soon) -->
-          <div class="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200 bg-white">
-            <div class="p-6">
-              <h3 class="text-lg font-medium text-gray-900">Enterprise</h3>
-              <p class="mt-1 text-sm text-gray-500">For large teams and organizations</p>
-              <p class="mt-4">
-                <span class="text-4xl font-extrabold text-gray-900">$49</span>
-                <span class="text-base font-medium text-gray-500">/mo</span>
-              </p>
-              <p class="mt-4">
-                <span class="bg-gray-100 text-gray-800 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium">
-                  Coming Soon
-                </span>
-              </p>
-            </div>
-            <div class="pt-6 pb-8 px-6">
-              <h4 class="text-sm font-medium text-gray-900 tracking-wide">What's included</h4>
-              <ul class="mt-4 space-y-3">
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Unlimited projects</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">100GB of storage</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Advanced analytics</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Dedicated support</span>
-                </li>
-                <li class="flex space-x-3">
-                  <svg class="flex-shrink-0 h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-sm text-gray-500">Custom domain</span>
-                </li>
-              </ul>
-            </div>
+          <div class="plan">
+            <div class="plan-name">Premium Plan</div>
+            <div class="plan-price">$19 <span>/ month</span></div>
+            <ul>
+              <li>All features</li>
+              <li>Unlimited storage</li>
+              <li>Priority support</li>
+              <li>Advanced analytics</li>
+            </ul>
+            <button class="button disabled">Coming Soon</button>
           </div>
         </div>
       </div>
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-white py-6 border-t mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <p class="text-sm text-gray-500 text-center">
-        &copy; <script>document.write(new Date().getFullYear())</script> SmartScale. All rights reserved.
-      </p>
-    </div>
-  </footer>
+      
+      <div class="card">
+        <h2>Billing Information</h2>
+        <p>Your billing information will appear here when you subscribe to a paid plan.</p>
+      </div>
+    </main>
+  </div>
 </body>
 </html> 
